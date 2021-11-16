@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from 'react-native-maps';
 import {GoogleMapProps} from '../types/components';
-import CarImage from '../assets/images/drive.png';
 
 const GoogleMap: React.FC<GoogleMapProps> = ({
   region,

@@ -42,6 +42,15 @@ const Main = () => {
   const [selectedDate, setSelectedDate] = useState(
     dayjs().format('YYYY-MM-DD'),
   );
+  // 마지막 측정된 위치(현재위치)
+  const lastPosition = useMemo(() => {
+    if (geolocation.lastPosition && geolocation.lastPosition.coords) {
+      const {longitude, latitude} = geolocation.lastPosition.coords;
+      return {longitude, latitude};
+    }
+    return {longitude: 0, latitude: 0};
+  }, [geolocation]);
+
   // 선 그리기 Data
   const lineData: TLineData[] = useMemo(() => {
     if (geoData) {
@@ -70,13 +79,7 @@ const Main = () => {
     }
     return [];
   }, [geoData]);
-  // 현재 위치 Data
-  const markerData: TLineData = useMemo(() => {
-    if (lineData && lineData.length > 0) {
-      return lineData[lineData.length - 1];
-    }
-    return undefined;
-  }, [lineData]);
+
   // 로그 Data
   const modalLogDataList = useMemo(() => {
     if (geoData) {
@@ -99,14 +102,6 @@ const Main = () => {
     return 0;
   }, [lineData]);
 
-  const lastPosition = useMemo(() => {
-    if (geolocation.lastPosition && geolocation.lastPosition.coords) {
-      const {longitude, latitude} = geolocation.lastPosition.coords;
-      return {longitude, latitude};
-    }
-    return {longitude: 0, latitude: 0};
-  }, [geolocation]);
-
   async function requestLocationPermission() {
     try {
       const granted = await PermissionsAndroid.request(
@@ -127,6 +122,10 @@ const Main = () => {
       console.warn(err);
     }
   }
+
+  useEffect(() => {
+    console.log(geoData);
+  }, [geoData]);
 
   useEffect(() => {
     initState();
@@ -231,15 +230,15 @@ const Main = () => {
       (position: GeolocationResponse) => {
         const lastPosition = position;
         setGeolocation(prev => ({...prev, lastPosition}));
+        setRegion(prev => ({
+          ...prev,
+          longitude: lastPosition.coords.longitude,
+          latitude: lastPosition.coords.latitude,
+        }));
       },
       (error: GeolocationError) => Alert.alert('Error', JSON.stringify(error)),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
-    // setRegion(prev => ({
-    //   ...prev,
-    //   longitudeDelta: zoomValue,
-    //   latitudeDelta: zoomValue,
-    // }));
   };
 
   // 위치 계속 추적
@@ -328,7 +327,7 @@ const Main = () => {
           <GoogleMap
             region={region}
             lineData={lineData}
-            markerData={markerData}
+            markerData={lastPosition}
             onRegionChange={onRegionChange}
           />
         </View>

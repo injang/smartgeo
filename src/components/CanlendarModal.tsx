@@ -12,7 +12,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
   return (
     <>
       <Modal animationType="slide" transparent={true} visible={visible}>
-        <View>
+        <View style={{height: '100%', backgroundColor: '#b9b9b9'}}>
           <Button title="닫기" onPress={onPress} />
           <Calendar
             current={selectedDate}

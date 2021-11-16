@@ -43,9 +43,13 @@ const MapInfo: React.FC<MapInfoProps> = ({
         </View>
       </View>
     </View>
-    <View>
-      {/* <Text>거리 : {distance}km</Text> */}
-      <Text>날짜 : {selectedDate}</Text>
+    <View style={styles.dateView}>
+      <Text style={styles.title}>날짜</Text>
+      <View style={{minWidth: '50%'}}>
+        <View style={styles.content}>
+          <Text style={styles.contentText}>{selectedDate}</Text>
+        </View>
+      </View>
     </View>
   </View>
 );
@@ -79,5 +83,12 @@ const styles = StyleSheet.create({
   },
   contentText: {
     paddingHorizontal: 8,
+  },
+  dateView: {
+    paddingTop: 8,
+    display: 'flex',
+    width: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

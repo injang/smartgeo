@@ -9,16 +9,16 @@ export const LogModal: React.FC<LogModalProps> = ({
 }) => {
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
-      <ScrollView>
+      <ScrollView style={{backgroundColor: '#b9b9b9'}}>
         <View>
           <Button title="닫기" onPress={onPress} />
         </View>
         <View style={styles.modalView}>
           {logData.map((log, i) => (
             <View key={i} style={styles.modalItem}>
-              <Text style={styles.modalText}>시간 : {log.time}</Text>
+              <Text style={styles.modalText}>{log.time}</Text>
               <Text style={styles.modalText}>
-                위도 : {log.latitude} 경도 : {log.longitude}
+                위도 : {log.latitude} {'      '} 경도 : {log.longitude}
               </Text>
             </View>
           ))}
@@ -30,10 +30,10 @@ export const LogModal: React.FC<LogModalProps> = ({
 
 const styles = StyleSheet.create({
   modalView: {
-    margin: 20,
+    margin: 8,
     backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
+    borderRadius: 4,
+    padding: 8,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalItem: {
+    width: '100%',
     margin: 2,
     backgroundColor: 'white',
     borderRadius: 4,
