@@ -4,14 +4,19 @@ import {TRegion, TLineData, TLogData} from './models';
 export type GoogleMapProps = {
   region: TRegion;
   lineData: TLineData[];
+  mapLineData: TLineData[];
   markerData: TLineData;
   onRegionChange: (region: Region) => void;
+  onRegionChangeComplete: (region: Region) => void;
 };
 
 export type LogModalProps = {
   visible: boolean;
   logData: TLogData[];
+  mapLogData: TLogData[];
   onPress: () => void;
+  handleLogDelete: () => void;
+  handleMapDataDelete: () => void;
 };
 
 export type CalendarModalProps = {
@@ -29,7 +34,6 @@ export type MapFunctionProps = {
   handleZoomOut: () => void;
   handleCalendarOpen: () => void;
   handleLogOpen: () => void;
-  handleLogDelete: () => void;
 };
 
 export type MapInfoProps = {

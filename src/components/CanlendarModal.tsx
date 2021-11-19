@@ -17,14 +17,21 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           <Calendar
             current={selectedDate}
             onDayPress={handleSelectedDate}
-            // markingType={'period'}
             markedDates={{
-              selectedDate: {
+              [selectedDate]: {
                 selected: true,
-                endingDay: true,
-                color: 'green',
+                selectedColor: '#F1EFFE',
+                selectedTextColor: '#7954FA',
               },
             }}
+            // markingType={'period'}
+            // markedDates={{
+            //   selectedDate: {
+            //     selected: true,
+            //     endingDay: true,
+            //     color: 'green',
+            //   },
+            // }}
           />
         </View>
       </Modal>

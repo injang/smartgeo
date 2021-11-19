@@ -21,6 +21,10 @@ import MapInfo from '../components/MapInfo';
 const zoomValue = 0.01;
 
 const Main = () => {
+  // 작업하면 위에꺼 배포할때 아래꺼 사용
+  // const developDbRef = '${developDbRef}';
+  const developDbRef = '';
+
   const database = firebase
     .app()
     .database('https://smartgeo-42ba6-default-rtdb.firebaseio.com/');
@@ -36,6 +40,8 @@ const Main = () => {
   const [isCalendarModal, setIsCalendarModal] = useState(false);
   // DB 저장 값
   const [geoData, setGeoData] = useState<TGeoData[]>([]);
+  // Map DB 저장값
+  const [mapData, setMapData] = useState<TRegion[]>([]);
   // 추적
   const [isTraking, setIsTraking] = useState(false);
   // 달력 값
@@ -69,29 +75,75 @@ const Main = () => {
           longitude: data.coords.longitude,
         }),
       );
-      // const formatData = Object.values(geoData).map((data, i) => ({
-      //   latitude: data.coords.latitude,
-      //   longitude: data.coords.longitude,
-      // }));
-      // console.log('formatData : ', formatData);
-      // return formatData;
       return tempList;
     }
     return [];
   }, [geoData]);
 
+  // 선 그리기 Data (Map)
+  const mapLineData: TLineData[] = useMemo(() => {
+    if (mapData) {
+      const tempList = [];
+
+      const orderedGeoData = Object.keys(mapData)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = mapData[key];
+          return obj;
+        }, {});
+
+      Object.values(orderedGeoData).map(data =>
+        tempList.push({
+          latitude: data.latitude,
+          longitude: data.longitude,
+        }),
+      );
+      return tempList;
+    }
+    return [];
+  }, [mapData]);
+
   // 로그 Data
   const modalLogDataList = useMemo(() => {
     if (geoData) {
-      const formatData = Object.values(geoData).map((data, i) => ({
+      const orderedGeoData = Object.keys(geoData)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = geoData[key];
+          return obj;
+        }, {});
+
+      const formatData = Object.values(orderedGeoData).map((data, i) => ({
         time: dayjs(data.timestamp).format('YYYY-MM-DD HH:mm:ss'),
         latitude: data.coords.latitude.toFixed(5),
         longitude: data.coords.longitude.toFixed(5),
       }));
+
       return formatData;
     }
     return [];
   }, [geoData]);
+
+  // 로그 Data (Map)
+  const modalMapLogDataList = useMemo(() => {
+    if (mapData) {
+      const orderedMapData = Object.keys(mapData)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = mapData[key];
+          return obj;
+        }, {});
+
+      const formatData = Object.entries(orderedMapData).map((data, i) => ({
+        time: dayjs(`${selectedDate} ${data[0]}`).format('YYYY-MM-DD HH:mm:ss'),
+        latitude: data[1].latitude.toFixed(5),
+        longitude: data[1].longitude.toFixed(5),
+      }));
+
+      return formatData;
+    }
+    return [];
+  }, [mapData, selectedDate]);
 
   const distance = useMemo(() => {
     if (lineData.length > 0) {
@@ -124,10 +176,6 @@ const Main = () => {
   }
 
   useEffect(() => {
-    console.log(geoData);
-  }, [geoData]);
-
-  useEffect(() => {
     initState();
     handleGetDB();
     requestLocationPermission();
@@ -150,6 +198,7 @@ const Main = () => {
           latitude,
           longitude,
         }));
+        handleGPSSaveDB();
         handleSaveDB();
       }
     }
@@ -172,23 +221,47 @@ const Main = () => {
     setIsTraking(false);
   };
 
-  // 위치 저장
-  const handleSaveDB = useCallback(() => {
+  // 위치  저장
+  const handleGPSSaveDB = useCallback(() => {
     // console.log('save : ', geolocation.lastPosition);
     database
       .ref(
-        `/geolocation/${dayjs().year()}/${
+        `${developDbRef}gps/${dayjs().year()}/${
           dayjs().month() + 1
         }/${dayjs().date()}/${dayjs().format('HH:mm:ss')}`,
       )
       .set(geolocation.lastPosition);
   }, [geolocation.lastPosition]);
 
+  // 위치 로그 저장
+  const handleSaveDB = useCallback(() => {
+    // console.log('save : ', geolocation.lastPosition);
+    database
+      .ref(
+        `${developDbRef}geolocation/${dayjs().year()}/${
+          dayjs().month() + 1
+        }/${dayjs().date()}/${dayjs().format('HH:mm:ss')}`,
+      )
+      .set(geolocation.lastPosition);
+  }, [geolocation.lastPosition]);
+
+  // 지도 위치 저장
+  const handleGoogleMapSaveDB = (newRegion: TRegion) => {
+    console.log('region : ', newRegion);
+    database
+      .ref(
+        `${developDbRef}map_geolocation/${dayjs().year()}/${
+          dayjs().month() + 1
+        }/${dayjs().date()}/${dayjs().format('HH:mm:ss')}`,
+      )
+      .set(newRegion);
+  };
+
   // 위치 불러오기
   const handleGetDB = useCallback(() => {
     database
       .ref(
-        `/geolocation/${dayjs(selectedDate).year()}/${
+        `${developDbRef}geolocation/${dayjs(selectedDate).year()}/${
           dayjs(selectedDate).month() + 1
         }/${dayjs(selectedDate).date()}`,
       )
@@ -196,6 +269,17 @@ const Main = () => {
       .then(snapshot => {
         // console.log('data: ', snapshot.val());
         setGeoData(snapshot.val());
+      });
+    database
+      .ref(
+        `${developDbRef}map_geolocation/${dayjs(selectedDate).year()}/${
+          dayjs(selectedDate).month() + 1
+        }/${dayjs(selectedDate).date()}`,
+      )
+      .once('value')
+      .then(snapshot => {
+        // console.log('data: ', snapshot.val());
+        setMapData(snapshot.val());
       });
   }, [selectedDate, geolocation.lastPosition]);
 
@@ -305,10 +389,11 @@ const Main = () => {
     setIsLogModal(false);
   };
 
+  // GPS 위치 삭제
   const handleLogDelete = () => {
     database
       .ref(
-        `/geolocation/${dayjs(selectedDate).year()}/${
+        `${developDbRef}geolocation/${dayjs(selectedDate).year()}/${
           dayjs(selectedDate).month() + 1
         }/${dayjs(selectedDate).date()}`,
       )
@@ -316,8 +401,31 @@ const Main = () => {
     setGeoData([]);
   };
 
+  // 지도 위치 삭제
+  const handleMapDataDelete = () => {
+    database
+      .ref(
+        `${developDbRef}map_geolocation/${dayjs(selectedDate).year()}/${
+          dayjs(selectedDate).month() + 1
+        }/${dayjs(selectedDate).date()}`,
+      )
+      .remove();
+    setMapData([]);
+  };
+
+  // 지도에서 나온 데이터(실시간)
   const onRegionChange = (newRegion: Region) => {
+    if (isTraking) {
+      handleGoogleMapSaveDB(newRegion);
+    }
+  };
+
+  // 지도에서 나온 데이터(드래그 마지막)
+  const onRegionChangeComplete = (newRegion: Region) => {
     setRegion(newRegion);
+    if (isTraking) {
+      handleGoogleMapSaveDB(newRegion);
+    }
   };
 
   return (
@@ -327,8 +435,10 @@ const Main = () => {
           <GoogleMap
             region={region}
             lineData={lineData}
+            mapLineData={mapLineData}
             markerData={lastPosition}
             onRegionChange={onRegionChange}
+            onRegionChangeComplete={onRegionChangeComplete}
           />
         </View>
         <View style={styles.info}>
@@ -340,7 +450,6 @@ const Main = () => {
             handleZoomOut={handleZoomOut}
             handleCalendarOpen={handleCalendarOpen}
             handleLogOpen={handleLogOpen}
-            handleLogDelete={handleLogDelete}
           />
           <MapInfo
             selectedDate={selectedDate}
@@ -353,7 +462,10 @@ const Main = () => {
       <LogModal
         visible={isLogModal}
         logData={modalLogDataList}
+        mapLogData={modalMapLogDataList}
         onPress={handleLogClose}
+        handleLogDelete={handleLogDelete}
+        handleMapDataDelete={handleMapDataDelete}
       />
       <CalendarModal
         selectedDate={selectedDate}

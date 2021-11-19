@@ -1,29 +1,92 @@
-import React from 'react';
-import {Modal, ScrollView, View, Button, Text, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {Modal, View, Button, Text, StyleSheet, FlatList} from 'react-native';
 import {LogModalProps} from '../types/components';
 
 export const LogModal: React.FC<LogModalProps> = ({
   visible,
   logData,
+  mapLogData,
   onPress,
+  handleLogDelete,
+  handleMapDataDelete,
 }) => {
+  const [isState, setIsState] = useState<'log' | 'map'>('log');
+
+  const handleDelete = () => {
+    if (isState === 'log') {
+      handleLogDelete();
+    }
+    if (isState === 'map') {
+      handleMapDataDelete();
+    }
+  };
+
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
-      <ScrollView style={{backgroundColor: '#b9b9b9'}}>
+      <View style={{backgroundColor: '#b9b9b9', flex: 1}}>
         <View>
           <Button title="닫기" onPress={onPress} />
-        </View>
-        <View style={styles.modalView}>
-          {logData.map((log, i) => (
-            <View key={i} style={styles.modalItem}>
-              <Text style={styles.modalText}>{log.time}</Text>
-              <Text style={styles.modalText}>
-                위도 : {log.latitude} {'      '} 경도 : {log.longitude}
-              </Text>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              padding: 8,
+              justifyContent: 'space-around',
+            }}>
+            <Button
+              color={isState === 'log' ? '#0050FD' : ''}
+              title="GPS 로그"
+              onPress={() => setIsState('log')}
+            />
+            <Button
+              color={isState === 'map' ? '#0050FD' : ''}
+              title="지도 로그"
+              onPress={() => setIsState('map')}
+            />
+            <View
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#FFF',
+                paddingHorizontal: 8,
+              }}>
+              <Text>로그개수</Text>
+              {isState === 'log' && <Text>{logData.length}</Text>}
+              {isState === 'map' && <Text>{mapLogData.length}</Text>}
             </View>
-          ))}
+            <Button color="#FF0000" title="로그삭제" onPress={handleDelete} />
+          </View>
         </View>
-      </ScrollView>
+        <View>
+          {isState === 'log' && (
+            <FlatList
+              data={logData}
+              renderItem={({item}) => (
+                <View style={styles.modalItem}>
+                  <Text style={styles.modalText}>{item.time}</Text>
+                  <Text style={styles.modalText}>
+                    위도 : {item.latitude} {'      '} 경도 : {item.longitude}
+                  </Text>
+                </View>
+              )}
+            />
+          )}
+          {isState === 'map' && (
+            <FlatList
+              data={mapLogData}
+              renderItem={({item}) => (
+                <View style={styles.modalItem}>
+                  <Text style={styles.modalText}>{item.time}</Text>
+                  <Text style={styles.modalText}>
+                    위도 : {item.latitude} {'      '} 경도 : {item.longitude}
+                  </Text>
+                </View>
+              )}
+            />
+          )}
+        </View>
+      </View>
     </Modal>
   );
 };

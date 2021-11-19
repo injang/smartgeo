@@ -6,17 +6,29 @@ import {GoogleMapProps} from '../types/components';
 const GoogleMap: React.FC<GoogleMapProps> = ({
   region,
   lineData,
+  mapLineData,
   markerData,
   onRegionChange,
+  onRegionChangeComplete,
 }) => {
   return (
     <MapView
       provider={PROVIDER_GOOGLE}
       style={styles.map}
       region={region}
-      onRegionChangeComplete={onRegionChange}>
+      onRegionChange={onRegionChange}
+      onRegionChangeComplete={onRegionChangeComplete}>
       {markerData && <Marker coordinate={markerData} style={styles.marker} />}
-      <Polyline coordinates={lineData} strokeColor="#000" strokeWidth={4} />
+      {lineData && lineData.length > 0 && (
+        <Polyline coordinates={lineData} strokeColor="#000" strokeWidth={1} />
+      )}
+      {mapLineData && mapLineData.length > 0 && (
+        <Polyline
+          coordinates={mapLineData}
+          strokeColor="#f00"
+          strokeWidth={1}
+        />
+      )}
     </MapView>
   );
 };
