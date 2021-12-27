@@ -1,16 +1,17 @@
-import React from 'react'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { ExampleContainer } from '@/Containers'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react';
 
-const Tab = createBottomTabNavigator()
+import { GoogleContainer, KakaoContainer, NaverContainer } from '@/Containers';
+
+const Tab = createBottomTabNavigator();
 
 // @refresh reset
-const MainNavigator = () => {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={ExampleContainer} />
-    </Tab.Navigator>
-  )
-}
+const MainNavigator = () => (
+  <Tab.Navigator>
+    <Tab.Screen name="Google" component={GoogleContainer} />
+    <Tab.Screen name="Kakao" component={KakaoContainer} />
+    <Tab.Screen name="Naver" component={NaverContainer} />
+  </Tab.Navigator>
+);
 
-export default MainNavigator
+export default MainNavigator;

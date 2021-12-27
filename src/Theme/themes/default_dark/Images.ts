@@ -7,5 +7,5 @@ export default function () {
     logo: {
       uri: 'https://thecodingmachine.github.io/react-native-boilerplate/img/TOM-small.png',
     },
-  }
+  };
 }

@@ -3,9 +3,11 @@
  *
  * Use it to define generic component styles (e.g. the default text styles, default button styles...).
  */
-import { StyleSheet } from 'react-native'
-import buttonStyles from './components/Buttons'
-import { ThemeCommonParams } from '@/Theme/theme.type'
+import { StyleSheet } from 'react-native';
+
+import { ThemeCommonParams } from '@/Theme/theme.type';
+
+import buttonStyles from './components/Buttons';
 /**
  *
  * @param Theme can be spread like {Colors, NavigationColors, Gutters, Layout, Common, ...args}
@@ -32,5 +34,5 @@ export default function ({ Colors, ...args }: ThemeCommonParams) {
         marginBottom: 10,
       },
     }),
-  }
+  };
 }

@@ -4,21 +4,21 @@
  *
  * You can add other navigation functions that you need and export them
  */
-import {
-  CommonActions,
-  createNavigationContainerRef,
-} from '@react-navigation/native'
+import { CommonActions, createNavigationContainerRef } from '@react-navigation/native';
 
 type RootStackParamList = {
-  Startup: undefined
-  Home: undefined
-}
+  Startup: undefined;
+  Home: undefined;
+  Google: undefined;
+  Kakao: undefined;
+  Naver: undefined;
+};
 
-export const navigationRef = createNavigationContainerRef<RootStackParamList>()
+export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 export function navigate(name: keyof RootStackParamList, params: any) {
   if (navigationRef.isReady()) {
-    navigationRef.navigate(name, params)
+    navigationRef.navigate(name, params);
   }
 }
 
@@ -29,7 +29,7 @@ export function navigateAndReset(routes = [], index = 0) {
         index,
         routes,
       }),
-    )
+    );
   }
 }
 
@@ -40,6 +40,6 @@ export function navigateAndSimpleReset(name: string, index = 0) {
         index,
         routes: [{ name }],
       }),
-    )
+    );
   }
 }
