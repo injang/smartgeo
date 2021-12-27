@@ -12,8 +12,6 @@ target 'smartgeo' do
     :hermes_enabled => false
   )
 
-  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
-
   target 'smartgeoTests' do
     inherit! :complete
     # Pods for testing
@@ -27,6 +25,5 @@ target 'smartgeo' do
 
   post_install do |installer|
     react_native_post_install(installer)
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
