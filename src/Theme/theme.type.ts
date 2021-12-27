@@ -1,6 +1,16 @@
 import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
 
+import { Fonts, Gutters, Images, Layout } from '.';
+
+type ValueOf<T> = T[keyof T];
+
+// Type
 export type StyleType = TextStyle & ViewStyle & ImageStyle;
+
+export type FontsType = ReturnType<typeof Fonts>;
+export type GuttersType = ReturnType<typeof Gutters>;
+export type ImagesType = ReturnType<typeof Images>;
+export type LayoutType = ReturnType<typeof Layout>;
 
 export type ThemeColors = { [key: string]: string };
 export type ThemeNavigationTheme = {

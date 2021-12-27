@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "167340448674",
+    "firebase_url": "https://smartgeo-42ba6-default-rtdb.firebaseio.com",
+    "project_id": "smartgeo-42ba6",
+    "storage_bucket": "smartgeo-42ba6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167340448674:android:c475d64275941c809e70fb",
+        "android_client_info": {
+          "package_name": "com.smartgeo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "167340448674-0n3u00u4dc571ifp80kekamvaet0u8pe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc7Us9mHpMmiFafC_xsRIzM3Lnb4nge1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "167340448674-0n3u00u4dc571ifp80kekamvaet0u8pe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
