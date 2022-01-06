@@ -11,8 +11,8 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyAaXGupzY-3WKsYbBiYLjwBSEphZWtpOcE"/>
+        android:name="com.naver.maps.map.CLIENT_ID"        
+        android:value="iwqaad2m1j" />
       <!-- You will also only need to add this uses-libray tag --> 
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>
       <activity

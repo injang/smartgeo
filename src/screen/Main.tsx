@@ -1,22 +1,22 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Alert, StyleSheet, View, PermissionsAndroid} from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert, StyleSheet, View, PermissionsAndroid } from 'react-native';
 
 import Geolocation, {
   GeolocationError,
   GeolocationResponse,
 } from '@react-native-community/geolocation';
 
-import {firebase} from '@react-native-firebase/database';
+import { firebase } from '@react-native-firebase/database';
 import dayjs from 'dayjs';
-import GoogleMap from '../components/GoogleMap';
-import {LogModal} from '../components/LogModal';
-import {TGeolocation, TRegion, TGeoData, TLineData} from '../types/models';
-import {initGeolocation, initRegion} from '../utils/constants';
+import { LogModal } from '../components/LogModal';
+import { TGeolocation, TRegion, TGeoData, TLineData } from '../types/models';
+import { initGeolocation, initRegion } from '../utils/constants';
 import CalendarModal from '../components/CanlendarModal';
 import haversine from 'haversine';
-import {Region} from 'react-native-maps';
+// import {Region} from 'react-native-maps';
 import MapFunction from '../components/MapFunction';
 import MapInfo from '../components/MapInfo';
+import NaverMap from '../components/NaverMap';
 
 const zoomValue = 0.01;
 
@@ -45,16 +45,14 @@ const Main = () => {
   // 추적
   const [isTraking, setIsTraking] = useState(false);
   // 달력 값
-  const [selectedDate, setSelectedDate] = useState(
-    dayjs().format('YYYY-MM-DD'),
-  );
+  const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
   // 마지막 측정된 위치(현재위치)
   const lastPosition = useMemo(() => {
     if (geolocation.lastPosition && geolocation.lastPosition.coords) {
-      const {longitude, latitude} = geolocation.lastPosition.coords;
-      return {longitude, latitude};
+      const { longitude, latitude } = geolocation.lastPosition.coords;
+      return { longitude, latitude };
     }
-    return {longitude: 0, latitude: 0};
+    return { longitude: 0, latitude: 0 };
   }, [geolocation]);
 
   // 선 그리기 Data
@@ -69,7 +67,7 @@ const Main = () => {
           return obj;
         }, {});
 
-      Object.values(orderedGeoData).map(data =>
+      Object.values(orderedGeoData).map((data) =>
         tempList.push({
           latitude: data.coords.latitude,
           longitude: data.coords.longitude,
@@ -92,7 +90,7 @@ const Main = () => {
           return obj;
         }, {});
 
-      Object.values(orderedGeoData).map(data =>
+      Object.values(orderedGeoData).map((data) =>
         tempList.push({
           latitude: data.latitude,
           longitude: data.longitude,
@@ -149,7 +147,7 @@ const Main = () => {
     if (lineData.length > 0) {
       const start = lineData[0];
       const end = lineData[lineData.length - 1];
-      return haversine(start, end, {unit: 'km'}).toFixed(2);
+      return haversine(start, end, { unit: 'km' }).toFixed(2);
     }
     return 0;
   }, [lineData]);
@@ -161,8 +159,7 @@ const Main = () => {
         {
           title: '위치 권한',
           message:
-            '이 앱은 사용자의 위치에 액세스해야 합니다' +
-            '그래야 위치를 알 수 있습니다',
+            '이 앱은 사용자의 위치에 액세스해야 합니다' + '그래야 위치를 알 수 있습니다',
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -190,10 +187,10 @@ const Main = () => {
 
   useEffect(() => {
     if (geolocation.lastPosition && geolocation.lastPosition.coords) {
-      const {latitude, longitude} = geolocation.lastPosition.coords;
+      const { latitude, longitude } = geolocation.lastPosition.coords;
       // console.log(latitude, longitude);
       if (isTraking) {
-        setRegion(prev => ({
+        setRegion((prev) => ({
           ...prev,
           latitude,
           longitude,
@@ -266,7 +263,7 @@ const Main = () => {
         }/${dayjs(selectedDate).date()}`,
       )
       .once('value')
-      .then(snapshot => {
+      .then((snapshot) => {
         // console.log('data: ', snapshot.val());
         setGeoData(snapshot.val());
       });
@@ -277,7 +274,7 @@ const Main = () => {
         }/${dayjs(selectedDate).date()}`,
       )
       .once('value')
-      .then(snapshot => {
+      .then((snapshot) => {
         // console.log('data: ', snapshot.val());
         setMapData(snapshot.val());
       });
@@ -301,10 +298,10 @@ const Main = () => {
     Geolocation.getCurrentPosition(
       (position: GeolocationResponse) => {
         const initialPosition = position;
-        setGeolocation(prev => ({...prev, initialPosition}));
+        setGeolocation((prev) => ({ ...prev, initialPosition }));
       },
       (error: GeolocationError) => Alert.alert('Error', JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
   };
 
@@ -313,15 +310,15 @@ const Main = () => {
     Geolocation.getCurrentPosition(
       (position: GeolocationResponse) => {
         const lastPosition = position;
-        setGeolocation(prev => ({...prev, lastPosition}));
-        setRegion(prev => ({
+        setGeolocation((prev) => ({ ...prev, lastPosition }));
+        setRegion((prev) => ({
           ...prev,
           longitude: lastPosition.coords.longitude,
           latitude: lastPosition.coords.latitude,
         }));
       },
       (error: GeolocationError) => Alert.alert('Error', JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
   };
 
@@ -331,10 +328,9 @@ const Main = () => {
       Geolocation.watchPosition(
         (position: GeolocationResponse) => {
           const lastPosition = position;
-          setGeolocation(prev => ({...prev, lastPosition}));
+          setGeolocation((prev) => ({ ...prev, lastPosition }));
         },
-        (error: GeolocationError) =>
-          Alert.alert('Error', JSON.stringify(error)),
+        (error: GeolocationError) => Alert.alert('Error', JSON.stringify(error)),
         {
           enableHighAccuracy: true,
           timeout: 20000,
@@ -352,7 +348,7 @@ const Main = () => {
 
   const handleZoomIn = () => {
     if (region.longitudeDelta > zoomValue && region.latitudeDelta > zoomValue) {
-      setRegion(prev => ({
+      setRegion((prev) => ({
         ...prev,
         longitudeDelta: region.longitudeDelta - zoomValue,
         latitudeDelta: region.latitudeDelta - zoomValue,
@@ -361,12 +357,13 @@ const Main = () => {
   };
 
   const handleZoomOut = () => {
-    if (region.longitudeDelta < 1 && region.latitudeDelta < 1)
-      setRegion(prev => ({
+    if (region.longitudeDelta < 1 && region.latitudeDelta < 1) {
+      setRegion((prev) => ({
         ...prev,
         longitudeDelta: region.longitudeDelta + zoomValue,
         latitudeDelta: region.latitudeDelta + zoomValue,
       }));
+    }
   };
 
   const handleTraking = () => {
@@ -432,7 +429,7 @@ const Main = () => {
     <>
       <View>
         <View style={styles.container}>
-          <GoogleMap
+          <NaverMap
             region={region}
             lineData={lineData}
             mapLineData={mapLineData}

@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
-import { GoogleMapProps } from '../types/components';
+import NaverMapView, { Marker, Polyline } from 'react-native-nmap';
+import { NaverMapProps } from '../types/components';
 
-const GoogleMap: React.FC<GoogleMapProps> = ({
+const NaverMap: React.FC<NaverMapProps> = ({
   region,
   lineData,
   mapLineData,
@@ -12,24 +12,26 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
   onRegionChangeComplete,
 }) => {
   return (
-    <MapView
-      provider={PROVIDER_GOOGLE}
+    <NaverMapView
       style={styles.map}
-      region={region}
-      onRegionChange={onRegionChange}
-      onRegionChangeComplete={onRegionChangeComplete}>
+      showsMyLocationButton={true}
+      center={{ ...region, zoom: 16 }}
+      //   onTouch={(e) => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
+      onCameraChange={onRegionChange}
+      //   onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
+    >
       {markerData && <Marker coordinate={markerData} style={styles.marker} />}
-      {lineData && lineData.length > 0 && (
+      {lineData && lineData.length > 2 && (
         <Polyline coordinates={lineData} strokeColor="#000" strokeWidth={1} />
       )}
-      {mapLineData && mapLineData.length > 0 && (
+      {mapLineData && mapLineData.length > 2 && (
         <Polyline coordinates={mapLineData} strokeColor="#f00" strokeWidth={1} />
       )}
-    </MapView>
+    </NaverMapView>
   );
 };
 
-export default GoogleMap;
+export default NaverMap;
 
 const styles = StyleSheet.create({
   map: {

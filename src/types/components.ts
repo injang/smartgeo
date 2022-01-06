@@ -1,5 +1,5 @@
-import {Region} from 'react-native-maps';
-import {TRegion, TLineData, TLogData} from './models';
+import { Region } from 'react-native-maps';
+import { TRegion, TLineData, TLogData } from './models';
 
 export type GoogleMapProps = {
   region: TRegion;
@@ -9,6 +9,8 @@ export type GoogleMapProps = {
   onRegionChange: (region: Region) => void;
   onRegionChangeComplete: (region: Region) => void;
 };
+
+export type NaverMapProps = GoogleMapProps;
 
 export type LogModalProps = {
   visible: boolean;
