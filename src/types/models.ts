@@ -1,11 +1,9 @@
-import {GeolocationResponse} from '@react-native-community/geolocation';
+export type TAllData = {
+  gps: TGpsData;
+  map: TMapData;
+}
 
-export type TGeolocation = {
-  initialPosition?: GeolocationResponse;
-  lastPosition?: GeolocationResponse;
-};
-
-export type TGeoData = {
+export type TGpsData = {
   coords: {
     accuracy: number;
     altitude: number;
@@ -16,18 +14,14 @@ export type TGeoData = {
   };
   mocked: boolean;
   timestamp: number;
-};
-
-export type TLineData = {
   latitude: number;
   longitude: number;
 };
 
-export type TRegion = {
+export type TMapData = {
   latitude: number;
   longitude: number;
-  latitudeDelta: number;
-  longitudeDelta: number;
+  timestamp: number;
 };
 
 export type TLogData = {
@@ -35,3 +29,18 @@ export type TLogData = {
   latitude: string;
   longitude: string;
 };
+
+export interface Coord {
+  latitude: number;
+  longitude: number;
+}
+export interface Region extends Coord {
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
+export interface Rect {
+  left?: number;
+  top?: number;
+  right?: number;
+  bottom?: number;
+}

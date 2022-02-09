@@ -1,32 +1,43 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import NaverMapView, { Marker, Polyline } from 'react-native-nmap';
 import { NaverMapProps } from '../types/components';
+import { Coord } from '../types/models';
 
-const NaverMap: React.FC<NaverMapProps> = ({
-  region,
-  lineData,
-  mapLineData,
-  markerData,
-  onRegionChange,
-  onRegionChangeComplete,
-}) => {
+const MARKER_SIZE = 8;
+
+const NaverMap: React.FC<NaverMapProps> = ({ mapRef, markerData, setMapData }) => {
+  // 화면이동 시 mapData 갱신
+  const onCameraChange = (e: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+    contentsRegion: [Coord, Coord, Coord, Coord, Coord];
+    coveringRegion: [Coord, Coord, Coord, Coord, Coord];
+  }) => {
+    setMapData({ latitude: e.latitude, longitude: e.longitude });
+  };
+
   return (
     <NaverMapView
+      ref={mapRef}
       style={styles.map}
       showsMyLocationButton={true}
-      center={{ ...region, zoom: 16 }}
-      //   onTouch={(e) => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-      onCameraChange={onRegionChange}
-      //   onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
-    >
-      {markerData && <Marker coordinate={markerData} style={styles.marker} />}
-      {lineData && lineData.length > 2 && (
-        <Polyline coordinates={lineData} strokeColor="#000" strokeWidth={1} />
-      )}
-      {mapLineData && mapLineData.length > 2 && (
-        <Polyline coordinates={mapLineData} strokeColor="#f00" strokeWidth={1} />
-      )}
+      onCameraChange={onCameraChange}>
+      {markerData &&
+        markerData.map(({ gps, map }, i) => (
+          <View key={i}>
+            <Marker coordinate={gps} width={MARKER_SIZE} height={MARKER_SIZE}>
+              <View style={styles.gpsMarker} />
+            </Marker>
+            <Marker coordinate={map} width={MARKER_SIZE} height={MARKER_SIZE}>
+              <View style={styles.mapMarker} />
+            </Marker>
+            {gps && map && (
+              <Polyline coordinates={[gps, map]} strokeColor="#000" strokeWidth={1} />
+            )}
+          </View>
+        ))}
     </NaverMapView>
   );
 };
@@ -37,7 +48,16 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  marker: {
-    zIndex: 10,
+  gpsMarker: {
+    width: MARKER_SIZE,
+    height: MARKER_SIZE,
+    borderRadius: 100,
+    backgroundColor: '#00f',
+  },
+  mapMarker: {
+    width: MARKER_SIZE,
+    height: MARKER_SIZE,
+    borderRadius: 100,
+    backgroundColor: '#f00',
   },
 });
